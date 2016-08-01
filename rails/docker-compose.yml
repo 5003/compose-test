@@ -1,0 +1,20 @@
+version: '2'
+services:
+  rails_new:
+    image: rails
+    working_dir: /usr/src/
+    volumes:
+      - .:/usr/src/
+    command: rails new rails_test --skip-bundle
+  bundle_install:
+    image: ruby:2.3
+    working_dir: /usr/src/rails_test/
+    volumes:
+      - ./rails_test/:/usr/src/rails_test/
+    command: bundle install
+  started_rails_app:
+    build: ./rails_test/
+    depends_on:
+      - bundle_install
+    ports:
+      - 3000:3000
