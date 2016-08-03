@@ -1,0 +1,26 @@
+version: '2'
+services:
+  data_stored:
+    image: busybox
+    volumes:
+      - /usr/share/container_registry/
+    tty: true
+  cached:
+    image: redis:3.2-alpine
+  registry_backend:
+    image: registry:2
+    ports:
+      - 5000:5000
+    links:
+      - cached
+      - data_stored
+    volumes_from:
+      - data_stored
+    environment:
+      SETTINGS_FLAVOR: local
+      STORAGE_PATH: /usr/share/container_registry/
+      SEARCH_BACKEND: sqlalchemy
+      CACHE_REDIS_HOST: cached
+      CACHE_REDIS_PORT: 6379
+      CACHE_LRU_REDIS_HOST: cached
+      CACHE_LRU_REDIS_PORT: 6379
